@@ -1,6 +1,6 @@
 import requests
 
-riot_api_key = "RGAPI-5c36f9ab-eaff-4e41-bc82-3bac7f9e6791"
+riot_api_key = "RGAPI-a55047de-6c63-410c-ac09-952cbc3b8c18"
 
 def main():
     username = get_username()
