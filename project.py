@@ -10,10 +10,28 @@ def main():
     region_server, game_name, tag_line, server = get_username_from_user()
     puuid = get_puuid(region_server, game_name, tag_line)
     matches = get_matches(server, puuid)
-    info = get_match_info(server, matches, puuid)
-    stats = game_stats(info, puuid)
-    win, lose = win_rate_checker(stats)
-    print(win, lose) 
+    
+    # Initialize win and lose counts
+    win_count = 0
+    lose_count = 0
+    
+    for match_id in matches:
+        info = get_match_info(server, match_id)
+        if info is not None:
+            stats = game_stats(info, puuid)
+            win, lose = win_rate_checker(stats)
+            win_count += win  # Update win count
+            lose_count += lose  # Update lose count
+            if win_count + lose_count == 50:  # Check if we check 50 matches
+                break  # exit the loop
+
+    #calculate the winrate
+    total_matches = win_count + lose_count
+    win_rate = (win_count / total_matches) * 100 if total_matches > 0 else 0
+    
+    print()
+    print(f"Win rate: {win_rate:.2f}%")
+    print()
 
 
 def get_username_from_user():
@@ -51,7 +69,7 @@ def get_matches(server, puuid):
     response.raise_for_status()  # Raise exception for HTTP errors
     return response.json()
 
-def get_match_info(server, matches, puuid):
+def get_match_info(server, match_id):
     if server in ("NA", "BR", "LAN", "LAS"):
         new_server = "americas"
     elif server in ("KR", "JP"):
@@ -60,9 +78,6 @@ def get_match_info(server, matches, puuid):
         new_server = "europe"
     elif server in ("PH2", "OCE", "SG2", "TH2", "TW2", "VN2"):
         new_server = "sea"
-
-    match_id = matches
-    match_id = match_id[0]
 
     url = f"https://{new_server}.api.riotgames.com/lol/match/v5/matches/{match_id}?api_key={riot_api_key}"
     response = requests.get(url)
@@ -73,7 +88,7 @@ def get_match_info(server, matches, puuid):
 def game_stats(info, puuid):
     match_info = info["info"]["participants"]
 
-    # Search for the player with the specified puuid
+    # Search for the player with the puuid
     player_index = None
     for i, participant in enumerate(match_info):
         if participant["puuid"] == puuid:
@@ -83,7 +98,7 @@ def game_stats(info, puuid):
     if player_index is None:
         return None  # Player not found in the match
 
-    # Get the player's win status
+    # Get the win status
     win = match_info[player_index]["win"]
 
     return win
