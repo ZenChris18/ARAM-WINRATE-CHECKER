@@ -10,7 +10,7 @@
 
 ## Description
 
-This project is a simple command-line tool that allows users to calculate their win rate in the gamemode ARAM(all random all mid) in League of Legends. It uses the Riot Games API to get user match data and analyze win/loss stats. (it only calculates the past 50 games because it takes too long to process)
+This project is a simple command-line tool that allows users to calculate their win rate in the gamemode ARAM(all random all mid) in League of Legends. It uses the Riot Games API to get user match data and analyze win/loss stats. (it only calculates the past 50 games because it takes too long to process when more than 50)
 
 ## Installation
 To use this tool, you need to have Python installed on your system. Additionally, you need to install the required libraries. You can install them by using pip install on the command line interface:
@@ -38,10 +38,10 @@ Replace `YOUR_API_KEY_HERE` with your very own private Riot Games API key.
 
 ## Usage
 
-To use this tool yourself, simply run the `main.py` file:
+To use this tool yourself, simply run the `project.py` file:
 
 ```bash
-python main.py
+python project.py
 ```
 
 Follow the instructions on the screen to enter your League of Legends username, tagline, and server. The program will then get your match data and calculate your win rate. And do not worry if you enter a wrong letter or wrong server the program will tell you if you made a mistake.
