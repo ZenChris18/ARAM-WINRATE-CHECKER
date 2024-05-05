@@ -1,14 +1,6 @@
 from project import get_username_from_user, get_puuid, get_matches, get_match_info, game_stats, win_rate_checker
 
 
-def main():
-    test_get_username_from_user()
-    test_get_match_info()
-    test_game_stats()
-    test_get_puuid()
-    test_get_matches()
-    test_win_rate_checker()
-
 def test_get_username_from_user():
     assert get_username_from_user() == ("Invalid server. Please try again.",)
     assert get_username_from_user("end") == ("end", None, None, None)
@@ -44,5 +36,3 @@ def test_win_rate_checker():
     assert win == 1
     assert lose == 0
 
-if __name__ == "__main__":
-    main()
