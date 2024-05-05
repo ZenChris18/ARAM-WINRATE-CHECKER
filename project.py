@@ -30,7 +30,7 @@ def main():
     win_rate = (win_count / total_matches) * 100 if total_matches > 0 else 0
     
     print()
-    print(f"Win rate: {win_rate:.2f}%")
+    print(f"WINRATE: {win_rate:.2f}%")
     print()
 
 
