@@ -7,50 +7,69 @@ load_dotenv()
 riot_api_key = os.environ.get("riot_api_key")
 
 def main():
-    region_server, game_name, tag_line, server = get_username_from_user()
-    puuid = get_puuid(region_server, game_name, tag_line)
-    matches = get_matches(server, puuid)
-    
-    # Initialize win and lose counts
-    win_count = 0
-    lose_count = 0
-    
-    for match_id in matches:
-        info = get_match_info(server, match_id)
-        if info is not None:
-            stats = game_stats(info, puuid)
-            win, lose = win_rate_checker(stats)
-            win_count += win  # Update win count
-            lose_count += lose  # Update lose count
-            if win_count + lose_count == 50:  # Check if we check 50 matches
-                break  # exit the loop
+    while True:
+        try:
+            region_server, game_name, tag_line, server = get_username_from_user()
+            if region_server == "end":  # Check if the user wants to quit
+                print("Exiting the program...")
+                break  # Exit the loop and end the program
+            puuid = get_puuid(region_server, game_name, tag_line)
+            matches = get_matches(server, puuid)
+            
+            # count win and lose
+            win_count = 0
+            lose_count = 0
+            
+            for match_id in matches:
+                info = get_match_info(server, match_id)
+                if info is not None:
+                    stats = game_stats(info, puuid)
+                    win, lose = win_rate_checker(stats)
+                    win_count += win  # Update win count
+                    lose_count += lose  # Update lose count
+                    if win_count + lose_count == 50:  # Check if we check 50 matches
+                        break  # exit the loop
 
-    #calculate the winrate
-    total_matches = win_count + lose_count
-    win_rate = (win_count / total_matches) * 100 if total_matches > 0 else 0
-    
-    print()
-    print(f"WINRATE: {win_rate:.2f}%")
-    print()
-
+            #calculate the winrate
+            total_matches = win_count + lose_count
+            win_rate = (win_count / total_matches) * 100 if total_matches > 0 else 0
+            
+            print()
+            print(f"WINRATE: {win_rate:.2f}%")
+            print()
+        except Exception as e:
+            print("An error occurred:", str(e))
 
 def get_username_from_user():
+    print('type "end" in username if you want to quit' )
     game_name = input("Enter your username: ").replace(" ", "_")
+    if game_name.lower() == "end":  # Check if the user wants to quit
+        return "end", None, None, None
     tag_line = input("Enter your tagline: ")
     print("Servers are NA, BR, LAN, LAS, KR, JP, EUNE, EUW, TR, RU, OCE, PH2, SG2, TH2, TW2, VN2")
     server = input("Enter Server: ").upper()
+    region_server = None
     if server in ("NA", "BR", "LAN", "LAS"):
         region_server = "americas"
     elif server in ("KR", "JP", "PH2", "OCE", "SG2", "TH2", "TW2", "VN2"):
         region_server = "asia"
     elif server in ("EUNE", "EUW", "TR", "RU"):
         region_server = "europe"
+    else:
+        print("Invalid server. Please try again.")
+        return get_username_from_user()  # Restart the function if the server is invalid
+    
+    if not game_name or not tag_line:
+        print("Username and tagline cannot be empty. Please try again.")
+        return get_username_from_user()  # Restart the function if username or tagline is empty
         
     return region_server, game_name, tag_line, server
 
 def get_puuid(server, game_name, tag_line):
     url = f"https://{server}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/{game_name}/{tag_line}?api_key={riot_api_key}"
     response = requests.get(url)
+    if response.status_code == 404:
+        raise ValueError("Player not found. Please enter a valid player")
     response.raise_for_status()  # Raise exception for HTTP errors
     return response.json()["puuid"]
 
@@ -111,5 +130,6 @@ def win_rate_checker(stats):
     else:
         lose += 1
     return win, lose
+
 if __name__ == "__main__":
     main()
