@@ -52,7 +52,7 @@ This project was created by Yujison Lagamayo. Special thanks to Riot Games for p
 
 ## Contact
 
-If you have any questions, suggestions, or feedback, feel free to email me at: yujisons@gmail.com 
+If you have any questions, suggestions, or feedback, feel free to email me at: yujisonlag@gmail.com 
 
 ## Additional Information
 
